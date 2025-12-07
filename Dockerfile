@@ -1,5 +1,5 @@
-# Build Stage - Use Debian Bullseye to match Railway's runtime
-FROM rust:1.83-bullseye as builder
+# Build Stage - Use Nightly Rust for edition2024 support
+FROM rustlang/rust:nightly-bullseye as builder
 
 # Install system dependencies for Solana SDK
 RUN apt-get update && apt-get install -y \
@@ -15,7 +15,7 @@ WORKDIR /app
 # Copy the core engine source
 COPY vialytics-core ./vialytics-core
 
-# Build the release binary
+# Build the release binary with nightly features
 WORKDIR /app/vialytics-core
 RUN cargo build --release
 
