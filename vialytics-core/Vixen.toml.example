@@ -1,0 +1,11 @@
+[source]
+endpoint = "https://grpc.solanavibestation.com" # Replace with your gRPC endpoint
+x_token = "your_auth_token" # Replace with your auth token if required
+timeout = 10
+
+[vialytics]
+rpc_url = "https://mainnet.helius-rpc.com/?api-key=YOUR_KEY" # Full RPC URL with API key
+db_url = "sqlite:wallet.db"
+
+[pipeline]
+# Add pipeline configuration if needed

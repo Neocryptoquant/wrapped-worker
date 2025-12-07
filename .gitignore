@@ -1,0 +1,8 @@
+wallet.db
+target
+node_modules
+dist
+.env
+dbs
+*.log
+.DS_Store

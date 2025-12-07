@@ -1,0 +1,32 @@
+[package]
+name = "vialytics-core"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "vialytics_core"
+path = "src/lib.rs"
+
+[[bin]]
+name = "vialytics-core"
+path = "src/main.rs"
+
+[dependencies]
+
+clap = { version = "4.5.20", features = ["derive"] }
+tokio = { version = "1.41.0", features = ["macros", "rt-multi-thread"] }
+toml = "0.8.19"
+tracing = "0.1.40"
+tracing-subscriber = {version = "0.3.20", features = ["env-filter"]}
+solana-client = "2.0.0"
+solana-sdk = "2.0.0"
+solana-transaction-status = "2.0.0"
+rustls = { version = "0.23", features = ["ring"]}
+sqlx = { version = "0.8", features = ["runtime-tokio", "tls-rustls", "sqlite"] }
+dotenvy = "0.15.0"
+serde_json = "1.0"
+yellowstone-vixen-yellowstone-grpc-source = "0.3.1"
+yellowstone-vixen = "0.5.1"
+yellowstone-vixen-core = "0.5.1"
+yellowstone-vixen-parser = "0.5.1"
+serde = { version = "1.0.228", features = ["derive"] }
