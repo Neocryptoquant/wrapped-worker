@@ -12,6 +12,9 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
+# Copy migrations.sql to the location expected by db.rs
+COPY migrations.sql ./migrations.sql
+
 # Copy the core engine source
 COPY vialytics-core ./vialytics-core
 
