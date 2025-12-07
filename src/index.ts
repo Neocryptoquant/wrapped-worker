@@ -4,7 +4,15 @@ import dotenv from 'dotenv';
 import { Database } from './types';
 import { generateWalletStats } from './analytics';
 
-dotenv.config();
+// Load .env file if it exists (for local dev), Railway injects vars directly
+dotenv.config({ path: '.env' });
+
+// Diagnostic logging
+console.log('Environment check:');
+console.log('SUPABASE_URL:', process.env.SUPABASE_URL ? 'SET' : 'MISSING');
+console.log('SUPABASE_KEY:', process.env.SUPABASE_KEY ? 'SET' : 'MISSING');
+console.log('RPC_URL:', process.env.RPC_URL ? 'SET' : 'MISSING');
+console.log('TREASURY_WALLET:', process.env.TREASURY_WALLET ? 'SET' : 'MISSING');
 
 const SUPABASE_URL = process.env.SUPABASE_URL!;
 const SUPABASE_KEY = process.env.SUPABASE_KEY!;
