@@ -1,5 +1,5 @@
 # Build Stage for Rust Binary
-FROM rust:nightly-bullseye as builder
+FROM rust:1.83-bullseye as builder
 
 # Install system dependencies for Solana SDK
 RUN apt-get update && apt-get install -y \
