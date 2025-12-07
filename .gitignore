@@ -1,9 +1,5 @@
 wallet.db
 target
-# Exception: allow the pre-built binary
-!vialytics-core/target/
-!vialytics-core/target/release/
-!vialytics-core/target/release/vialytics-core
 node_modules
 dist
 .env
