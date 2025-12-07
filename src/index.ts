@@ -75,13 +75,9 @@ async function processRequest(request: any, retryCount = 0) {
 
     try {
         // 1. Verify Payment
-        if (!request.tx_signature.startsWith('mock-signature')) {
-            const isValidPayment = await verifyPayment(request.tx_signature, request.wallet_address);
-            if (!isValidPayment) {
-                throw new Error('Invalid payment');
-            }
-        } else {
-            console.log(`[${jobId}] Skipping payment verification for mock signature`);
+        const isValidPayment = await verifyPayment(request.tx_signature, request.wallet_address);
+        if (!isValidPayment) {
+            throw new Error('Invalid payment');
         }
 
         // 2. Update status to processing
