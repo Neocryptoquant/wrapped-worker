@@ -1,0 +1,11 @@
+[source]
+endpoint = "https://mainnet.helius-rpc.com"
+x-token = "532c57d3-d97d-445a-971c-7c017aafa285"
+timeout = 10
+
+[vialytics]
+rpc_url = "https://mainnet.helius-rpc.com/?api-key=532c57d3-d97d-445a-971c-7c017aafa285" 
+db_url = "sqlite:wallet.db"
+
+[pipeline]
+# Add pipeline configuration if needed

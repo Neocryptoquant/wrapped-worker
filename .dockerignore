@@ -1,0 +1,8 @@
+node_modules
+dist
+.env
+dbs
+*.log
+.DS_Store
+# Don't ignore the binary!
+!vialytics-core/target/release/vialytics-core
