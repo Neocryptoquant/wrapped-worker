@@ -23,10 +23,14 @@ RUN cargo build --release
 # ----------------------------------------
 
 # Final Runtime Stage
-FROM node:18-bullseye-slim
+FROM node:20-bullseye-slim
 
 # Install system runtime dependencies
+# - python3, build-essential: required for better-sqlite3 native build
+# - libudev-dev, libssl-dev: required for solana-client
 RUN apt-get update && apt-get install -y \
+    python3 \
+    build-essential \
     libudev-dev \
     libssl-dev \
     ca-certificates \
