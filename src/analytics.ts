@@ -65,8 +65,8 @@ db_url = "sqlite:${dbPath}"
             buffer += chunk;
             console.log(`[Indexer]: ${chunk.trim()}`);
 
-            // Check buffer for completion message
-            if (buffer.includes('History fetch completed')) {
+            // Check buffer for completion message (matches Rust output)
+            if (buffer.includes('Finished fetching history')) {
                 console.log('History fetch complete. Stopping indexer.');
                 child.kill();
                 resolve();
@@ -129,21 +129,43 @@ db_url = "sqlite:${dbPath}"
       LIMIT 1
     `).get(START_TIME_2025) as { mint: string } | undefined;
 
-        // Total Volume (Estimate in USD) (2025 only)
-        // We sum up all positive token movements (inflows) as a proxy for volume.
-        // For simplicity, we assume 1 SOL = $200 and ignore other token prices for now (treating them as 0 or needing an oracle).
-        // A better hack: Count SOL movements specifically.
-        const solMint = 'So11111111111111111111111111111111111111112';
-        const volumeQuery = db.prepare(`
-      SELECT SUM(ABS(amount)) as volume 
-      FROM token_movements 
-      WHERE mint = ? AND block_time >= ?
-    `).get(solMint, START_TIME_2025) as { volume: number };
-
-        // Convert lamports to SOL then to USD
-        const totalVolumeSOL = (volumeQuery.volume || 0) / 1_000_000_000;
+        // Total Volume (Multi-Token Hybrid Approach)
+        // Fetch SOL price once
         const solPrice = await getSolPrice();
-        const totalVolumeUSD = totalVolumeSOL * solPrice;
+        console.log(`Current SOL price: $${solPrice}`);
+
+        // Query all token movements grouped by mint
+        const tokenMovements = db.prepare(`
+            SELECT 
+                mint, 
+                SUM(ABS(amount)) as total_amount,
+                MAX(decimals) as decimals
+            FROM token_movements 
+            WHERE block_time >= ?
+            GROUP BY mint
+        `).all(START_TIME_2025) as { mint: string, total_amount: number, decimals: number }[];
+
+        console.log(`Found ${tokenMovements.length} unique tokens traded in 2025`);
+
+        let totalVolumeUSD = 0;
+        const { getTokenPrice } = await import('./services/PriceService');
+
+        for (const token of tokenMovements) {
+            const price = getTokenPrice(token.mint, solPrice);
+
+            if (price > 0) {
+                const tokenAmount = token.total_amount / Math.pow(10, token.decimals || 9);
+                const volumeUSD = tokenAmount * price;
+                totalVolumeUSD += volumeUSD;
+
+                // Log significant token volumes for debugging
+                if (volumeUSD > 100) {
+                    console.log(`  ${token.mint.slice(0, 8)}...: $${volumeUSD.toFixed(2)} (${tokenAmount.toFixed(2)} tokens @ $${price})`);
+                }
+            }
+        }
+
+        console.log(`Total Volume (USD): $${totalVolumeUSD.toFixed(2)}`);
 
         // Max Holding Time (Diamond Hands) (2025 only)
         // Find the token with the earliest 'Received' date that is still held (or was held the longest)
@@ -185,7 +207,8 @@ db_url = "sqlite:${dbPath}"
             ? Math.floor((Date.now() - (firstTx.time * 1000)) / (1000 * 60 * 60 * 24))
             : 0;
 
-        // Highest Single Transaction (2025 only)
+        // Highest Single Transaction (2025 only) - using SOL movements
+        const solMint = 'So11111111111111111111111111111111111111112';
         const highestTxQuery = db.prepare(`
             SELECT MAX(ABS(amount)) as max_amount
             FROM token_movements
