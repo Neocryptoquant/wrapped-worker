@@ -74,11 +74,12 @@ async function processRequest(request: any, retryCount = 0) {
     console.log(`[${jobId}] Processing request for ${request.wallet_address}... (Attempt ${retryCount + 1}/${MAX_RETRIES + 1})`);
 
     try {
-        // 1. Verify Payment
-        const isValidPayment = await verifyPayment(request.tx_signature, request.wallet_address);
-        if (!isValidPayment) {
-            throw new Error('Invalid payment');
-        }
+        // 1. Verify Payment (Disabled for Free Mode)
+        // const isValidPayment = await verifyPayment(request.tx_signature, request.wallet_address);
+        // if (!isValidPayment) {
+        //     throw new Error('Invalid payment');
+        // }
+        console.log(`[${jobId}] Skipping payment verification (Free Mode)`);
 
         // 2. Update status to processing
         await supabase.from('wrapped_requests').update({ status: 'processing' } as any).eq('id', request.id);
